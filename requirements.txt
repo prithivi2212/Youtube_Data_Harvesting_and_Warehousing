@@ -1,0 +1,6 @@
+streamlit
+pymongo
+google-api-python-client
+pymysql
+datetime
+pandas
