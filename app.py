@@ -300,130 +300,142 @@ cursor.execute(create_comment_table)
 # Commit the changes to the MySQL database
 conn.commit()
 
-# Create a Streamlit selectbox for selecting what data to migrate from MongoDB to MySQL
-data_to_migrate = st.selectbox("Select data to migrate to MySQL", ["Channel Details", "Video Details", "Comments"])
+# Function to fetch all channel names from MongoDB
+def fetch_channel_names_from_mongo():
+    channel_collection = mydb["channel_details"]
+    channel_names = channel_collection.distinct("Channel_Name")
+    return channel_names
 
-if st.button("Migrate Selected Data from MongoDB to MySQL"):
-    if data_to_migrate == "Channel Details":
-        # Connect to the MongoDB collection
-        mongo_channel_collection = mydb["channel_details"]
+# Input field for selecting a channel name
+selected_channel = st.selectbox("Select a Channel", fetch_channel_names_from_mongo())
 
-        # Fetch all channel documents from MongoDB
-        mongo_channel_data = list(mongo_channel_collection.find())
+if st.button("Submit"):
+    if selected_channel:
+        data_to_migrate = st.selectbox("Select data to migrate to MySQL", ["Channel Details", "Video Details", "Comments"])
 
-        if mongo_channel_data:
-            # Iterate through MongoDB channel data and insert into MySQL
-            for channel_document in mongo_channel_data:
-                # Define the SQL query to insert channel data into MySQL
-                sql_insert_channel = """
-                INSERT IGNORE INTO channel (
-                    Channel_Id, Channel_Name, channel_type, Subscription_Count, 
-                    Channel_Views, Channel_Description, channel_status, Video_count
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
-                """
+        if st.button("Migrate Selected Data from MongoDB to MySQL"):
+            if data_to_migrate == "Channel Details":
+                # Connect to the MongoDB collection
+                mongo_channel_collection = mydb["channel_details"]
 
-                # Extract data from the MongoDB document
-                channel_values = (
-                    channel_document["Channel_Id"],
-                    channel_document["Channel_Name"],
-                    channel_document["channel_type"],
-                    channel_document["Subscription_Count"],
-                    channel_document["Channel_Views"],
-                    channel_document["Channel_Description"],
-                    channel_document["channel_status"],
-                    channel_document["Video_count"]
-                )
+                # Fetch all channel documents from MongoDB
+                mongo_channel_data = list(mongo_channel_collection.find())
 
-                # Execute the SQL insert query
-                cursor.execute(sql_insert_channel, channel_values)
+                if mongo_channel_data:
+                    # Iterate through MongoDB channel data and insert into MySQL
+                    for channel_document in mongo_channel_data:
+                        # Define the SQL query to insert channel data into MySQL
+                        sql_insert_channel = """
+                        INSERT IGNORE INTO channel (
+                            Channel_Id, Channel_Name, channel_type, Subscription_Count, 
+                            Channel_Views, Channel_Description, channel_status, Video_count
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                        """
 
-            # Commit the changes to the MySQL database
-            conn.commit()
+                        # Extract data from the MongoDB document
+                        channel_values = (
+                            channel_document["Channel_Id"],
+                            channel_document["Channel_Name"],
+                            channel_document["channel_type"],
+                            channel_document["Subscription_Count"],
+                            channel_document["Channel_Views"],
+                            channel_document["Channel_Description"],
+                            channel_document["channel_status"],
+                            channel_document["Video_count"]
+                        )
 
-            st.success("Channel details have been migrated from MongoDB to MySQL.")
-        else:
-            st.error("No channel details found in MongoDB.")
-    elif data_to_migrate == "Video Details":
-        # Connect to the MongoDB collection
-        mongo_video_collection = mydb["video_details"]
+                        # Execute the SQL insert query
+                        cursor.execute(sql_insert_channel, channel_values)
 
-        # Fetch all video documents from MongoDB
-        mongo_video_data = list(mongo_video_collection.find())
+                    # Commit the changes to the MySQL database
+                    conn.commit()
 
-        if mongo_video_data:
-            # Iterate through MongoDB video data and insert into MySQL
-            for video_document in mongo_video_data:
-                # Define the SQL query to insert video data into MySQL
-                sql_insert_video = """
-                INSERT IGNORE INTO video (
-                    Channel_ID, Video_ID, Playlist_Id, Video_Name, Video_Description, 
-                    Published_At, View_Count, Like_Count, Dislike_Count, 
-                    Favorite_Count, Comment_Count, Duration, Thumbnail, Caption_Status
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                """
-                # Extract data from the MongoDB document
-                video_values = (
-                    video_document["Channel_ID"],
-                    video_document["Video_ID"],
-                    video_document["Playlist_Id"],
-                    video_document["Video_Name"],
-                    video_document["Video_Description"],
-                    video_document["Published_At"],
-                    video_document["View Count"],
-                    video_document["Like_Count"],
-                    video_document["Dislike_Count"],
-                    video_document["Favorite_Count"],
-                    video_document["Comment_Count"],
-                    video_document["Duration"],
-                    video_document["Thumbnail"],
-                    video_document["Caption_Status"]
-                )
+                    st.success("Channel details have been migrated from MongoDB to MySQL.")
+                else:
+                    st.error("No channel details found in MongoDB.")
+            elif data_to_migrate == "Video Details":
+                # Connect to the MongoDB collection
+                mongo_video_collection = mydb["video_details"]
 
-                # Execute the SQL insert query
-                cursor.execute(sql_insert_video, video_values)
+                # Fetch all video documents from MongoDB
+                mongo_video_data = list(mongo_video_collection.find())
 
-            # Commit the changes to the MySQL database
-            conn.commit()
+                if mongo_video_data:
+                    # Iterate through MongoDB video data and insert into MySQL
+                    for video_document in mongo_video_data:
+                        # Define the SQL query to insert video data into MySQL
+                        sql_insert_video = """
+                        INSERT IGNORE INTO video (
+                            Channel_ID, Video_ID, Playlist_Id, Video_Name, Video_Description, 
+                            Published_At, View_Count, Like_Count, Dislike_Count, 
+                            Favorite_Count, Comment_Count, Duration, Thumbnail, Caption_Status
+                        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                        """
+                        # Extract data from the MongoDB document
+                        video_values = (
+                            video_document["Channel_ID"],
+                            video_document["Video_ID"],
+                            video_document["Playlist_Id"],
+                            video_document["Video_Name"],
+                            video_document["Video_Description"],
+                            video_document["Published_At"],
+                            video_document["View Count"],
+                            video_document["Like_Count"],
+                            video_document["Dislike_Count"],
+                            video_document["Favorite_Count"],
+                            video_document["Comment_Count"],
+                            video_document["Duration"],
+                            video_document["Thumbnail"],
+                            video_document["Caption_Status"]
+                        )
 
-            st.success("Video details have been migrated from MongoDB to MySQL.")
-        else:
-            st.error("No video details found in MongoDB.")
-    elif data_to_migrate == "Comments":
-        # Connect to the MongoDB collection
-        mongo_comments_collection = mydb["comments"]
+                        # Execute the SQL insert query
+                        cursor.execute(sql_insert_video, video_values)
 
-        # Fetch all comments documents from MongoDB
-        mongo_comments_data = list(mongo_comments_collection.find())
+                    # Commit the changes to the MySQL database
+                    conn.commit()
 
-        if mongo_comments_data:
-            # Iterate through MongoDB comments data and insert into MySQL
-            for comment_document in mongo_comments_data:
-                # Define the SQL query to insert comment data into MySQL
-                sql_insert_comment = """
-                INSERT IGNORE INTO comment (
-                    comment_id, Video_ID, comment_text, comment_author, comment_publishedAt
-                ) VALUES (%s, %s, %s, %s, %s)
-                """
+                    st.success("Video details have been migrated from MongoDB to MySQL.")
+                else:
+                    st.error("No video details found in MongoDB.")
+            elif data_to_migrate == "Comments":
+                # Connect to the MongoDB collection
+                mongo_comments_collection = mydb["comments"]
 
-                # Extract data from the MongoDB document
-                comment_values = (
-                    comment_document["comment_id"],
-                    comment_document["Video_ID"],
-                    comment_document["comment_text"],
-                    comment_document["comment_author"],
-                    comment_document["comment_publishedAt"]
-                )
+                # Fetch all comments documents from MongoDB
+                mongo_comments_data = list(mongo_comments_collection.find())
 
-                # Execute the SQL insert query
-                cursor.execute(sql_insert_comment, comment_values)
+                if mongo_comments_data:
+                    # Iterate through MongoDB comments data and insert into MySQL
+                    for comment_document in mongo_comments_data:
+                        # Define the SQL query to insert comment data into MySQL
+                        sql_insert_comment = """
+                        INSERT IGNORE INTO comment (
+                            comment_id, Video_ID, comment_text, comment_author, comment_publishedAt
+                        ) VALUES (%s, %s, %s, %s, %s)
+                        """
 
-            # Commit the changes to the MySQL database
-            conn.commit()
+                        # Extract data from the MongoDB document
+                        comment_values = (
+                            comment_document["comment_id"],
+                            comment_document["Video_ID"],
+                            comment_document["comment_text"],
+                            comment_document["comment_author"],
+                            comment_document["comment_publishedAt"]
+                        )
 
-            st.success("Comments have been migrated from MongoDB to MySQL.")
-        else:
-            st.error("No comments found in MongoDB.")
+                        # Execute the SQL insert query
+                        cursor.execute(sql_insert_comment, comment_values)
 
+                    # Commit the changes to the MySQL database
+                    conn.commit()
+
+                    st.success("Comments have been migrated from MongoDB to MySQL.")
+                else:
+                    st.error("No comments found in MongoDB.")
+            st.success(f"Data for {selected_channel} has been migrated from MongoDB to MySQL.")
+    else:
+        st.warning("Please select a Channel")
 
 # Map questions to SQL queries
 sql_queries = {
