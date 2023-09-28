@@ -54,6 +54,7 @@ This project is licensed under the MIT License. Please review the LICENSE file f
 **Contact**
 
 For further enquires reach out to me using,
+
 📧 Email: prithivi.n22@gmail.com
 
 🌐 LinkedIn: www.linkedin.com/in/prithivinanjundan
