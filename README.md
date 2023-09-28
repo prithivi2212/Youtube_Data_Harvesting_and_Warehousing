@@ -9,7 +9,7 @@ This project develops a Streamlit app which uses Youtube API to retrieve Channel
 - Installations
 - Project Overview
 - Working with the Project
-- Contribution
+- Updates
 - License
 - Contact
  
@@ -38,10 +38,26 @@ pip install pandas
 
   **Working with the Project**
 
-1. Clone the repository: ```git clone https://github.com/gopiashokan/Youtube-Harvesting Warehousing.git```
+1. Clone the repository: ```git clone https://github.com/prithivi2212/Youtube_Data_Harvesting_and_Warehousing.git```
 2. Install the required packages: ```pip install -r requirements.txt```
 3. Run the Streamlit app: ```streamlit run app.py```
 4. Access the app in your browser at ```http://localhost:8501```
+
+**Updates**
+
+Feel free to update me with a pull request if you encounter a problem or error with the code provided.
+
+**License**
+
+This project is licensed under the MIT License. Please review the LICENSE file for more details.
+
+**Contact**
+
+For further enquires reach out to me using,
+📧 Email: prithivi.n22@gmail.com
+
+🌐 LinkedIn: www.linkedin.com/in/prithivinanjundan
+
 
 
 
